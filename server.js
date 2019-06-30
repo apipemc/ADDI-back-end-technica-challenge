@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import { Server as SocketServer } from 'ws';
 import 'dotenv/config';
 
 import LeadModel from './models/leads';
@@ -24,6 +25,8 @@ const server = app.listen(PORT, function () {
     console.log("App now running on port", port);
 });
 
+const wss = new SocketServer({ server });
+
 const handleError = (res, reason, message, code) => {
     console.log("ERROR: " + reason);
     res.status(code || 500).json({ "error": message });
@@ -43,6 +46,33 @@ app.post("/api/leads", async (req, res) => {
         const lead = new LeadModel(req.body);
         const result = await lead.save();
         res.status(200).json(result);
+    } catch (error) {
+        handleError(res, error.message, "Failed to created leads.");
+    }
+});
+
+app.get("/api/leads/process_judicial_past", async (req, res) => {
+    try {
+        // req.body;
+        // client.send(new Date().toTimeString());
+    } catch (error) {
+        handleError(res, error.message, "Failed to created leads.");
+    }
+});
+
+app.get("/api/leads/process_personal_information", async (req, res) => {
+    try {
+        // req.body;
+        // client.send(new Date().toTimeString());
+    } catch (error) {
+        handleError(res, error.message, "Failed to created leads.");
+    }
+});
+
+app.get("/api/leads/process_credit", async (req, res) => {
+    try {
+        // req.body;
+        // client.send(new Date().toTimeString());
     } catch (error) {
         handleError(res, error.message, "Failed to created leads.");
     }
