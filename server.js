@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import 'dotenv/config';
 
 import LeadModel from './models/leads';
 
-require('dotenv').config();
 
 const { PORT, MONGODB_URI } = process.env;
 
