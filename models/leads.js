@@ -1,35 +1,41 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
+import uniqueValidator  from 'mongoose-unique-validator';
 
-const leadSchema = Schema({
+const leadSchema = mongoose.Schema({
     first_name: {
         type: String,
-        required: true
+        required: [true, "cannot be empty."]
     },
     last_name: {
         type: String,
-        required: true
+        required: [true, "cannot be empty."]
     },
-    document_tye: {
+    document_type: {
         type: String,
+        required: [true, "cannot be empty."],
         enum : ['CC', 'CE', 'PS', 'DNI', 'Other'],
     },
     document_id: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, "cannot be empty."],
+        unique: true,
+        lowercase: true,
+        index: true
     },
     date_of_expedition: {
         type: Date,
-        required: true,
+        required: [true, "cannot be empty."],
     },
     email: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, "cannot be empty."],
+        unique: true,
+        lowercase: true,
+        index: true
     },
     date_of_birthday: {
         type: Date,
-        required: true,
+        required: [true, "cannot be empty."],
     },
     gender: {
         type: String,
@@ -61,7 +67,7 @@ const leadSchema = Schema({
     },
     status: {
         type: String,
-        required: true,
+        required: [true, "cannot be empty."],
         enum : ['Prospect', 'Won', 'Lost'],
         default: 'Prospect',
     },
@@ -71,6 +77,8 @@ const leadSchema = Schema({
         updatedAt: 'updated_at' 
     }
 });
+
+leadSchema.plugin(uniqueValidator, { message: "is already taken." });
 
 const Lead = mongoose.model('Lead', leadSchema);
 

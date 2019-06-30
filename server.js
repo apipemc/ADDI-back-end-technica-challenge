@@ -26,17 +26,30 @@ const server = app.listen(PORT, function () {
 
 const wss = new SocketServer({ server });
 
-const handleError = (res, reason, message, code) => {
-    console.log("ERROR: " + reason);
-    res.status(code || 500).json({ "error": message });
+const handleSuccess = (res, result) => {
+    console.log("SUCCESS: " + result);
+    res.status(200).json(result);
+}
+
+const handleError = (res, error) => {
+    console.log("ERROR: " + JSON.stringify(error));
+    if (error.name === 'MongoError' || error.name === 'ValidationError') {
+        const message = Object.keys(error.errors).reduce((errors ,key) => {
+            errors[key] = error.errors[key].message;
+            return errors;
+        }, {});
+        res.status(422).json({ errors: message });
+    } else {
+        res.status(500).json({ "error": error.message });
+    }
 }
 
 app.get("/api/leads", async (_, res) => {
     try {
         const leads = await LeadModel.find().exec();
-        res.status(200).json(leads);
+        handleSuccess(res, leads);
     } catch (error) {
-        handleError(res, error.message, "Failed to get leads.");
+        handleError(res, error);
     }
 });
 
@@ -44,9 +57,9 @@ app.post("/api/leads", async (req, res) => {
     try {
         const lead = new LeadModel(req.body);
         const result = await lead.save();
-        res.status(200).json(result);
+        handleSuccess(res, result);
     } catch (error) {
-        handleError(res, error.message, "Failed to created leads.");
+        handleError(res, error);
     }
 });
 
@@ -67,9 +80,9 @@ app.get("/api/leads/:id/process_judicial_past", async (req, res) => {
                 }));
             });
         }, rand);
-        res.status(200).json(result);
+        handleSuccess(res, result);
     } catch (error) {
-        handleError(res, error.message, "Failed to process judicial past leads.");
+        handleError(res, error);
     }
 });
 
@@ -90,9 +103,9 @@ app.get("/api/leads/:id/process_personal_information", async (req, res) => {
                 }));
             });
         }, rand);
-        res.status(200).json(result);
+        handleSuccess(res, result);
     } catch (error) {
-        handleError(res, error.message, "Failed to process personal information leads.");
+        handleError(res, error);
     }
 });
 
@@ -117,18 +130,18 @@ app.get("/api/leads/:id/process_credit", async (req, res) => {
                 }));
             });
         }, rand);
-        res.status(200).json(result);
+        handleSuccess(res, result);
     } catch (error) {
-        handleError(res, error.message, "Failed to process credit leads.");
+        handleError(res, error);
     }
 });
 
 app.get("/api/leads/:id", async (req, res) => {
     try {
         const lead = await LeadModel.findById(req.params.id).exec();
-        res.status(200).json(lead);
+        handleSuccess(res, lead);
     } catch (error) {
-        handleError(res, error.message, "Failed to get lead.");
+        handleError(res, error);
     }
 });
 
@@ -137,8 +150,8 @@ app.put("/api/leads/:id", async (req, res) => {
         const lead = await LeadModel.findById(req.params.id).exec();
         lead.set(request.body);
         const result = await lead.save();
-        res.status(200).json(result);
+        handleSuccess(res, result);
     } catch (error) {
-        handleError(res, error.message, "Failed to updated lead.");
+        handleError(res, error);
     }
 });
