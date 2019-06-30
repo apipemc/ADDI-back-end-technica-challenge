@@ -101,7 +101,7 @@ app.get("/api/leads/:id/process_credit", async (req, res) => {
         const lead = await LeadModel.findById(req.params.id).exec();
         if(lead.approved_personal_information && lead.approved_judicial_past) {
             const score = Math.floor(0 + Math.random()*(100 + 1 - 0));
-            const status = (score => 60) ? 'Won' : 'Lost';
+            const status = (score >= 60) ? 'Won' : 'Lost';
             lead.set({ score, status });
         } else {
             lead.set({ status: 'Lost', score: 0 });
