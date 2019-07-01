@@ -152,7 +152,7 @@ app.get("/api/leads/:id", async (req, res) => {
 app.put("/api/leads/:id", async (req, res) => {
     try {
         const lead = await LeadModel.findById(req.params.id).exec();
-        lead.set(request.body);
+        lead.set(req.body);
         const result = await lead.save();
         handleSuccess(res, result);
     } catch (error) {
