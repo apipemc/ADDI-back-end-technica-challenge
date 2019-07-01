@@ -66,8 +66,10 @@ app.post("/api/leads", async (req, res) => {
 app.get("/api/leads/:id/process_judicial_past", async (req, res) => {
     try {
         const lead = await LeadModel.findById(req.params.id).exec();
+        const state = Math.round(Math.random());
         lead.set({
-            approved_judicial_past: Math.round(Math.random()),
+            approved_personal_information: state,
+            status: state ? 'Prospect' : 'Lost',
         });
         const result = await lead.save();
         const rand = Math.round(Math.random() * (3000 - 500)) + 500;
@@ -89,8 +91,10 @@ app.get("/api/leads/:id/process_judicial_past", async (req, res) => {
 app.get("/api/leads/:id/process_personal_information", async (req, res) => {
     try {
         const lead = await LeadModel.findById(req.params.id).exec();
+        const state = Math.round(Math.random());
         lead.set({
-            approved_personal_information: Math.round(Math.random()),
+            approved_personal_information: state,
+            status: state ? 'Prospect' : 'Lost',
         });
         const result = await lead.save();
         const rand = Math.round(Math.random() * (3000 - 500)) + 500;
