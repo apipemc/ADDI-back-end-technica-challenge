@@ -68,7 +68,7 @@ app.get("/api/leads/:id/process_judicial_past", async (req, res) => {
         const lead = await LeadModel.findById(req.params.id).exec();
         const state = Math.round(Math.random());
         lead.set({
-            approved_personal_information: state,
+            approved_judicial_past: state,
             status: state ? 'Prospect' : 'Lost',
         });
         const result = await lead.save();
